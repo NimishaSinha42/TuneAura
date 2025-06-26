@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎵 Mood-Based Music Recommender</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 30px;
+    }
+    select, button, input {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    .card {
+      background: white;
+      padding: 10px;
+      margin: 10px auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    img {
+      width: 100%;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎶 Mood & Language Based Music Recommender</h1>
+
+  <!-- Search Inputs -->
+  <input type="text" id="searchBox" placeholder="Search manually (optional)">
+  <input type="text" id="artist" placeholder="Artist (optional)">
+  <input type="text" id="movie" placeholder="Movie (optional)">
+  <br>
+
+  <!-- Filters -->
+  <select id="mood">
+    <option value="romantic">Romantic</option>
+    <option value="sad">Sad</option>
+    <option value="happy">Happy</option>
+    <option value="party">Party</option>
+    <option value="chill">Chill</option>
+    <option value="heartbreak">Heartbreak</option>
+    <option value="motivational">Motivational</option>
+    <option value="devotional">Devotional</option>
+    <option value="lofi">Lofi</option>
+    <option value="classic">Classic</option>
+    <option value="sleep">Sleep</option>
+    <option value="travel">Travel</option>
+  </select>
+
+ <label for="lang">Select Language:</label>
+<select id="lang">
+  <option value="Hindi">Hindi</option>
+  <option value="English">English</option>
+  <option value="Telugu">Telugu</option>
+  <option value="Punjabi">Punjabi</option>
+  <option value="Bhojpuri">Bhojpuri</option>
+  <option value="Tamil">Tamil</option>
+  <option value="Kannada">Kannada</option>
+  <option value="Malayalam">Malayalam</option>
+  <option value="Marathi">Marathi</option>
+  <option value="Gujarati">Gujarati</option>
+  <option value="Bangla">Bangla</option>
+  <option value="Urdu">Urdu</option>
+</select>
+
+
+  <select id="year">
+    <option value="latest">Latest</option>
+    <option value="mid">Mid (2005-2015)</option>
+    <option value="old">Old (before 2005)</option>
+  </select>
+
+  <br>
+  <button onclick="searchMusic()">🎧 Suggest Songs</button>
+
+  <p id="greeting"></p>
+  <div id="results"></div>
+
+  <script>
+    const apiKey = "AIzaSyDBlQQSfFxM940Ols1TF4xSnRp-Z3PoAng";
+
+    function getYearFilter(yearType) {
+      const date = new Date();
+      if (yearType === 'latest') {
+        return `&publishedAfter=2015-01-01T00:00:00Z`;
+      } else if (yearType === 'mid') {
+        return `&publishedAfter=2005-01-01T00:00:00Z&publishedBefore=2015-12-31T00:00:00Z`;
+      } else if (yearType === 'old') {
+        return `&publishedBefore=2005-01-01T00:00:00Z`;
+      }
+      return "";
+    }
+
+    function searchMusic() {
+      const mood = document.getElementById("mood").value;
+      const lang = document.getElementById("lang").value;
+      const year = document.getElementById("year").value;
+      const artist = document.getElementById("artist").value;
+      const movie = document.getElementById("movie").value;
+      const manual = document.getElementById("searchBox").value;
+
+      let query = "";
+      if (manual) {
+        query = manual;
+      } else {
+        query = `${mood} ${lang} songs`;
+        if (artist) query += ` ${artist}`;
+        if (movie) query += ` ${movie}`;
+      }
+
+      const filter = getYearFilter(year);
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=5&key=${apiKey}${filter}`;
+
+      document.getElementById("greeting").innerText = `Showing results for: ${query}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const resultsDiv = document.getElementById("results");
+          resultsDiv.innerHTML = "";
+          data.items.forEach(video => {
+            const title = video.snippet.title;
+            const videoId = video.id.videoId;
+            const thumbnail = video.snippet.thumbnails.medium.url;
+            const link = `https://www.youtube.com/watch?v=${videoId}`;
+            resultsDiv.innerHTML += `
+              <div class="card">
+                <img src="${thumbnail}" alt="Thumbnail">
+                <p><strong>${title}</strong></p>
+                <a href="${link}" target="_blank">▶️ Watch</a>
+              </div>
+            `;
+          });
+        });
+    }
+  </script>
+</body>
+</html>
