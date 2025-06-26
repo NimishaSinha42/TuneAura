@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎵 MoodTunes - Music Recommender</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Cosmic Mood Music Explorer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -14,6 +14,13 @@
       --light: #f5f6fa;
       --accent: #fd79a8;
       --success: #00b894;
+      
+      /* Theme variables */
+      --bg-color: #0f0e17;
+      --particle-color: #a786df;
+      --text-color: #fffffe;
+      --card-bg: #16132a;
+      --highlight: #ff8906;
     }
     
     * {
@@ -23,191 +30,237 @@
     }
     
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, var(--light) 0%, #dfe6e9 100%);
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-color);
       min-height: 100vh;
-      padding: 2rem;
-      color: var(--dark);
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+      transition: all 0.8s ease;
     }
     
+    /* Cosmic Background Elements */
+    .cosmic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      background: var(--particle-color);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: float infinite alternate;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); }
+      100% { transform: translateY(-20px) translateX(10px); }
+    }
+    
+    /* Theme-specific elements */
+    .theme-element {
+      position: absolute;
+      border-radius: 50%;
+      transition: all 0.5s ease;
+      cursor: pointer;
+      z-index: -1;
+    }
+    
+    /* Container */
     .container {
       max-width: 1200px;
       margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
     }
     
     header {
       text-align: center;
-      margin-bottom: 2.5rem;
-      animation: fadeIn 0.8s ease-out;
+      margin-bottom: 3rem;
+      animation: fadeIn 1s ease-out;
     }
     
     h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       margin-bottom: 0.5rem;
-      color: var(--primary);
-      position: relative;
-      display: inline-block;
-    }
-    
-    h1::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 4px;
-      background: var(--accent);
-      border-radius: 2px;
+      background: linear-gradient(90deg, var(--highlight), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
     
     .tagline {
-      font-size: 1.1rem;
-      color: var(--dark);
-      opacity: 0.8;
-    }
-    
-    .search-container {
-      background: white;
-      border-radius: 15px;
-      padding: 2rem;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-      animation: slideUp 0.6s ease-out;
-    }
-    
-    .search-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    
-    .search-icon {
-      background: var(--primary);
-      color: white;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 1rem;
       font-size: 1.2rem;
+      color: var(--secondary);
+      opacity: 0.8;
+      margin-bottom: 2rem;
     }
     
-    .search-title {
-      font-size: 1.5rem;
-      font-weight: 600;
+    /* Mood Selector */
+    .mood-selector {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    
+    .mood-option {
+      background: var(--card-bg);
+      border: 2px solid transparent;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .mood-option:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    
+    .mood-option.active {
+      border-color: var(--highlight);
+      background: linear-gradient(135deg, var(--card-bg), #1e1b3a);
+      box-shadow: 0 0 20px rgba(255, 137, 6, 0.3);
+    }
+    
+    /* Search Panel */
+    .search-panel {
+      background: rgba(22, 19, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: slideUp 0.8s ease-out;
     }
     
     .input-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
     }
     
     .input-field {
       flex: 1;
       min-width: 200px;
-      position: relative;
     }
     
     .input-field label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
-      font-size: 0.9rem;
-      color: var(--dark);
+      color: var(--secondary);
     }
     
     .input-field input, 
     .input-field select {
       width: 100%;
-      padding: 12px 15px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: var(--text-color);
       font-size: 1rem;
       transition: all 0.3s ease;
-      background: white;
     }
     
     .input-field input:focus, 
     .input-field select:focus {
-      border-color: var(--primary);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
-    }
-    
-    .input-field i {
-      position: absolute;
-      right: 15px;
-      top: 40px;
-      color: var(--primary);
+      border-color: var(--highlight);
+      box-shadow: 0 0 0 3px rgba(255, 137, 6, 0.3);
     }
     
     .search-btn {
-      background: var(--primary);
-      color: white;
+      background: linear-gradient(135deg, var(--highlight), var(--accent));
+      color: var(--dark);
       border: none;
-      padding: 12px 30px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 500;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 0.8rem;
       margin: 0 auto;
-      box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+      box-shadow: 0 4px 20px rgba(255, 137, 6, 0.4);
     }
     
     .search-btn:hover {
-      background: #5649d1;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 6px 25px rgba(255, 137, 6, 0.6);
     }
     
-    .search-btn i {
-      margin-right: 8px;
-    }
-    
+    /* Results */
     .results-container {
-      animation: fadeIn 0.8s ease-out;
+      animation: fadeIn 1s ease-out;
     }
     
     .results-header {
-      font-size: 1.3rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--secondary);
-      display: inline-block;
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+    }
+    
+    .results-header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: var(--highlight);
+      border-radius: 3px;
     }
     
     .results-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
     }
     
     .song-card {
-      background: white;
-      border-radius: 12px;
+      background: var(--card-bg);
+      border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      transition: all 0.4s ease;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     
     .song-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     }
     
     .thumbnail {
       position: relative;
       height: 0;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      padding-bottom: 56.25%;
       overflow: hidden;
     }
     
@@ -218,103 +271,87 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.5s ease;
+      transition: transform 0.8s ease;
     }
     
     .song-card:hover .thumbnail img {
-      transform: scale(1.05);
+      transform: scale(1.1);
+    }
+    
+    .play-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .song-card:hover .play-overlay {
+      opacity: 1;
     }
     
     .play-btn {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255,255,255,0.8);
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
+      background: rgba(255,255,255,0.9);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--primary);
-      font-size: 1.2rem;
-      opacity: 0;
+      color: var(--highlight);
+      font-size: 1.5rem;
       transition: all 0.3s ease;
     }
     
-    .song-card:hover .play-btn {
-      opacity: 1;
+    .play-btn:hover {
+      transform: scale(1.1);
+      background: white;
     }
     
     .song-info {
-      padding: 1.2rem;
+      padding: 1.5rem;
     }
     
     .song-title {
       font-weight: 600;
       margin-bottom: 0.5rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: 1.1rem;
     }
     
     .song-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.85rem;
-      color: #666;
-      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      color: var(--secondary);
+      margin-top: 1rem;
     }
     
     .watch-btn {
       display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 8px 15px;
-      border-radius: 6px;
+      background: linear-gradient(135deg, var(--highlight), var(--accent));
+      color: var(--dark);
+      padding: 10px 20px;
+      border-radius: 50px;
       text-decoration: none;
-      font-size: 0.9rem;
-      margin-top: 1rem;
+      font-weight: 500;
+      margin-top: 1.5rem;
       transition: all 0.3s ease;
+      text-align: center;
+      width: 100%;
     }
     
     .watch-btn:hover {
-      background: #5649d1;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 137, 6, 0.4);
     }
     
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: #666;
-    }
-    
-    .empty-state i {
-      font-size: 3rem;
-      color: var(--secondary);
-      margin-bottom: 1rem;
-    }
-    
-    .loading {
-      display: flex;
-      justify-content: center;
-      padding: 2rem;
-    }
-    
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba(108, 92, 231, 0.2);
-      border-radius: 50%;
-      border-top-color: var(--primary);
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
+    /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -323,7 +360,7 @@
     @keyframes slideUp {
       from { 
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(50px);
       }
       to { 
         opacity: 1;
@@ -331,36 +368,65 @@
       }
     }
     
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    /* Responsive */
     @media (max-width: 768px) {
       h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
       }
       
-      .search-container {
+      .search-panel {
         padding: 1.5rem;
       }
       
       .input-field {
         min-width: 100%;
       }
+      
+      .mood-option {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Cosmic Background -->
+  <div class="cosmic-bg" id="cosmicBg"></div>
+  
+  <!-- Theme Elements -->
+  <div id="themeElements"></div>
+  
   <div class="container">
     <header>
-      <h1>MoodTunes</h1>
-      <p class="tagline">Discover perfect songs for every mood and moment</p>
+      <h1>Cosmic Mood Music</h1>
+      <p class="tagline">Your soundtrack for every cosmic emotion</p>
+      
+      <div class="mood-selector">
+        <div class="mood-option active" data-mood="romantic">
+          <i class="fas fa-heart"></i> Romantic
+        </div>
+        <div class="mood-option" data-mood="chill">
+          <i class="fas fa-cloud-moon"></i> Chill
+        </div>
+        <div class="mood-option" data-mood="happy">
+          <i class="fas fa-sun"></i> Happy
+        </div>
+        <div class="mood-option" data-mood="sad">
+          <i class="fas fa-cloud-rain"></i> Sad
+        </div>
+        <div class="mood-option" data-mood="party">
+          <i class="fas fa-glass-cheers"></i> Party
+        </div>
+      </div>
     </header>
     
-    <div class="search-container">
-      <div class="search-header">
-        <div class="search-icon">
-          <i class="fas fa-music"></i>
-        </div>
-        <div class="search-title">Find Your Perfect Soundtrack</div>
-      </div>
-      
+    <div class="search-panel">
       <div class="input-group">
         <div class="input-field">
           <label for="searchBox"><i class="fas fa-search"></i> Search manually</label>
@@ -368,53 +434,14 @@
         </div>
         
         <div class="input-field">
-          <label for="artist"><i class="fas fa-user"></i> Artist</label>
-          <input type="text" id="artist" placeholder="E.g. Arijit Singh, Ed Sheeran...">
-        </div>
-        
-        <div class="input-field">
-          <label for="movie"><i class="fas fa-film"></i> Movie</label>
-          <input type="text" id="movie" placeholder="E.g. Kabir Singh, Titanic...">
-        </div>
-      </div>
-      
-      <div class="input-group">
-        <div class="input-field">
-          <label for="mood"><i class="fas fa-heart"></i> Mood</label>
-          <select id="mood">
-            <option value="romantic">Romantic</option>
-            <option value="sad">Sad</option>
-            <option value="happy">Happy</option>
-            <option value="party">Party</option>
-            <option value="chill">Chill</option>
-            <option value="heartbreak">Heartbreak</option>
-            <option value="motivational">Motivational</option>
-            <option value="devotional">Devotional</option>
-            <option value="lofi">Lofi</option>
-            <option value="classic">Classic</option>
-            <option value="sleep">Sleep</option>
-            <option value="travel">Travel</option>
-          </select>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-        
-        <div class="input-field">
           <label for="lang"><i class="fas fa-language"></i> Language</label>
           <select id="lang">
             <option value="Hindi">Hindi</option>
             <option value="English">English</option>
-            <option value="Telugu">Telugu</option>
             <option value="Punjabi">Punjabi</option>
-            <option value="Bhojpuri">Bhojpuri</option>
             <option value="Tamil">Tamil</option>
-            <option value="Kannada">Kannada</option>
-            <option value="Malayalam">Malayalam</option>
-            <option value="Marathi">Marathi</option>
-            <option value="Gujarati">Gujarati</option>
-            <option value="Bangla">Bangla</option>
-            <option value="Urdu">Urdu</option>
+            <option value="Telugu">Telugu</option>
           </select>
-          <i class="fas fa-chevron-down"></i>
         </div>
         
         <div class="input-field">
@@ -424,16 +451,15 @@
             <option value="mid">Mid (2005-2015)</option>
             <option value="old">Old (before 2005)</option>
           </select>
-          <i class="fas fa-chevron-down"></i>
         </div>
       </div>
       
       <button class="search-btn" onclick="searchMusic()">
-        <i class="fas fa-headphones"></i> Suggest Songs
+        <i class="fas fa-meteor"></i> Launch Music Search
       </button>
     </div>
     
-    <div class="results-container" id="results-container">
+    <div class="results-container" id="resultsContainer">
       <p id="greeting" class="results-header"></p>
       <div id="results"></div>
     </div>
@@ -441,43 +467,258 @@
 
   <script>
     const apiKey = "AIzaSyDBlQQSfFxM940Ols1TF4xSnRp-Z3PoAng";
-
-    function getYearFilter(yearType) {
-      const date = new Date();
-      if (yearType === 'latest') {
-        return `&publishedAfter=2015-01-01T00:00:00Z`;
-      } else if (yearType === 'mid') {
-        return `&publishedAfter=2005-01-01T00:00:00Z&publishedBefore=2015-12-31T00:00:00Z`;
-      } else if (yearType === 'old') {
-        return `&publishedBefore=2005-01-01T00:00:00Z`;
+    let currentTheme = 'romantic';
+    
+    // Initialize cosmic background
+    function initCosmicBackground() {
+      const cosmicBg = document.getElementById('cosmicBg');
+      cosmicBg.innerHTML = '';
+      
+      // Create stars/particles
+      for (let i = 0; i < 100; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random size between 1-3px
+        const size = Math.random() * 2 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random position
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        // Random animation duration
+        const duration = Math.random() * 10 + 5;
+        particle.style.animationDuration = `${duration}s`;
+        
+        cosmicBg.appendChild(particle);
       }
-      return "";
     }
-
+    
+    // Create theme elements based on mood
+    function createThemeElements(mood) {
+      const themeContainer = document.getElementById('themeElements');
+      themeContainer.innerHTML = '';
+      
+      switch(mood) {
+        case 'romantic':
+          // Create floating hearts
+          for (let i = 0; i < 8; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('theme-element');
+            heart.innerHTML = '<i class="fas fa-heart"></i>';
+            heart.style.color = '#ff6b81';
+            heart.style.fontSize = `${Math.random() * 20 + 15}px`;
+            heart.style.left = `${Math.random() * 90 + 5}%`;
+            heart.style.top = `${Math.random() * 90 + 5}%`;
+            heart.style.animation = `float ${Math.random() * 10 + 5}s infinite alternate`;
+            heart.addEventListener('click', () => {
+              heart.style.transform = 'scale(1.5)';
+              setTimeout(() => {
+                heart.style.transform = 'scale(1)';
+              }, 300);
+            });
+            themeContainer.appendChild(heart);
+          }
+          break;
+          
+        case 'chill':
+          // Create floating clouds and moon
+          const moon = document.createElement('div');
+          moon.classList.add('theme-element');
+          moon.innerHTML = '<i class="fas fa-moon"></i>';
+          moon.style.color = '#f5f6fa';
+          moon.style.fontSize = '50px';
+          moon.style.left = '80%';
+          moon.style.top = '15%';
+          themeContainer.appendChild(moon);
+          
+          for (let i = 0; i < 5; i++) {
+            const cloud = document.createElement('div');
+            cloud.classList.add('theme-element');
+            cloud.innerHTML = '<i class="fas fa-cloud"></i>';
+            cloud.style.color = '#dfe6e9';
+            cloud.style.fontSize = `${Math.random() * 30 + 20}px`;
+            cloud.style.left = `${Math.random() * 90 + 5}%`;
+            cloud.style.top = `${Math.random() * 90 + 5}%`;
+            cloud.style.animation = `float ${Math.random() * 15 + 10}s infinite alternate`;
+            cloud.addEventListener('click', () => {
+              cloud.style.transform = 'translateY(-20px)';
+              setTimeout(() => {
+                cloud.style.transform = 'translateY(0)';
+              }, 1000);
+            });
+            themeContainer.appendChild(cloud);
+          }
+          break;
+          
+        case 'happy':
+          // Create sun and floating emojis
+          const sun = document.createElement('div');
+          sun.classList.add('theme-element');
+          sun.innerHTML = '<i class="fas fa-sun"></i>';
+          sun.style.color = '#ffd32a';
+          sun.style.fontSize = '60px';
+          sun.style.left = '15%';
+          sun.style.top = '10%';
+          sun.style.animation = 'pulse 3s infinite';
+          themeContainer.appendChild(sun);
+          
+          const emojis = ['😊', '🌈', '🌻', '🎈', '🍦', '🎉'];
+          for (let i = 0; i < 10; i++) {
+            const emoji = document.createElement('div');
+            emoji.classList.add('theme-element');
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.fontSize = `${Math.random() * 30 + 20}px`;
+            emoji.style.left = `${Math.random() * 90 + 5}%`;
+            emoji.style.top = `${Math.random() * 90 + 5}%`;
+            emoji.style.animation = `float ${Math.random() * 8 + 3}s infinite alternate`;
+            emoji.addEventListener('click', () => {
+              emoji.style.transform = 'rotate(360deg)';
+              setTimeout(() => {
+                emoji.style.transform = 'rotate(0deg)';
+              }, 1000);
+            });
+            themeContainer.appendChild(emoji);
+          }
+          break;
+          
+        case 'sad':
+          // Create rain and clouds
+          for (let i = 0; i < 5; i++) {
+            const cloud = document.createElement('div');
+            cloud.classList.add('theme-element');
+            cloud.innerHTML = '<i class="fas fa-cloud"></i>';
+            cloud.style.color = '#a4b0be';
+            cloud.style.fontSize = `${Math.random() * 40 + 30}px`;
+            cloud.style.left = `${Math.random() * 90 + 5}%`;
+            cloud.style.top = `${Math.random() * 30 + 5}%`;
+            themeContainer.appendChild(cloud);
+          }
+          
+          for (let i = 0; i < 20; i++) {
+            const rain = document.createElement('div');
+            rain.classList.add('theme-element');
+            rain.innerHTML = '<i class="fas fa-tint"></i>';
+            rain.style.color = '#74b9ff';
+            rain.style.fontSize = '15px';
+            rain.style.left = `${Math.random() * 100}%`;
+            rain.style.top = `${Math.random() * 100}%`;
+            rain.style.animation = `rainFall ${Math.random() * 2 + 1}s linear infinite`;
+            themeContainer.appendChild(rain);
+          }
+          
+          // Add rain animation
+          const style = document.createElement('style');
+          style.textContent = `
+            @keyframes rainFall {
+              0% { transform: translateY(-100px) translateX(0); opacity: 1; }
+              100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
+            }
+          `;
+          document.head.appendChild(style);
+          break;
+          
+        case 'party':
+          // Create floating balloons and confetti
+          const colors = ['#ff6b81', '#ff9ff3', '#feca57', '#1dd1a1', '#54a0ff'];
+          for (let i = 0; i < 15; i++) {
+            const balloon = document.createElement('div');
+            balloon.classList.add('theme-element');
+            balloon.innerHTML = '<i class="fas fa-glass-cheers"></i>';
+            balloon.style.color = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.fontSize = `${Math.random() * 30 + 20}px`;
+            balloon.style.left = `${Math.random() * 90 + 5}%`;
+            balloon.style.top = `${Math.random() * 90 + 5}%`;
+            balloon.style.animation = `float ${Math.random() * 5 + 3}s infinite alternate`;
+            balloon.addEventListener('click', () => {
+              balloon.style.transform = 'scale(1.3) rotate(20deg)';
+              setTimeout(() => {
+                balloon.style.transform = 'scale(1) rotate(0deg)';
+              }, 300);
+            });
+            themeContainer.appendChild(balloon);
+          }
+          break;
+      }
+    }
+    
+    // Change theme based on mood
+    function changeTheme(mood) {
+      currentTheme = mood;
+      document.body.className = mood;
+      
+      switch(mood) {
+        case 'romantic':
+          document.documentElement.style.setProperty('--bg-color', '#0f0e17');
+          document.documentElement.style.setProperty('--particle-color', '#ff6b81');
+          document.documentElement.style.setProperty('--card-bg', '#16132a');
+          document.documentElement.style.setProperty('--highlight', '#ff8906');
+          break;
+          
+        case 'chill':
+          document.documentElement.style.setProperty('--bg-color', '#0a3d62');
+          document.documentElement.style.setProperty('--particle-color', '#74b9ff');
+          document.documentElement.style.setProperty('--card-bg', '#1e3d59');
+          document.documentElement.style.setProperty('--highlight', '#00cec9');
+          break;
+          
+        case 'happy':
+          document.documentElement.style.setProperty('--bg-color', '#0984e3');
+          document.documentElement.style.setProperty('--particle-color', '#fdcb6e');
+          document.documentElement.style.setProperty('--card-bg', '#1e4b7e');
+          document.documentElement.style.setProperty('--highlight', '#00b894');
+          break;
+          
+        case 'sad':
+          document.documentElement.style.setProperty('--bg-color', '#2d3436');
+          document.documentElement.style.setProperty('--particle-color', '#636e72');
+          document.documentElement.style.setProperty('--card-bg', '#3d484d');
+          document.documentElement.style.setProperty('--highlight', '#74b9ff');
+          break;
+          
+        case 'party':
+          document.documentElement.style.setProperty('--bg-color', '#6c5ce7');
+          document.documentElement.style.setProperty('--particle-color', '#fd79a8');
+          document.documentElement.style.setProperty('--card-bg', '#5d4ac7');
+          document.documentElement.style.setProperty('--highlight', '#fdcb6e');
+          break;
+      }
+      
+      createThemeElements(mood);
+    }
+    
+    // Mood selection
+    document.querySelectorAll('.mood-option').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('active'));
+        this.classList.add('active');
+        const mood = this.getAttribute('data-mood');
+        changeTheme(mood);
+      });
+    });
+    
+    // Initialize
+    initCosmicBackground();
+    createThemeElements(currentTheme);
+    
+    // Music search function
     function searchMusic() {
-      const mood = document.getElementById("mood").value;
+      const mood = currentTheme;
       const lang = document.getElementById("lang").value;
       const year = document.getElementById("year").value;
-      const artist = document.getElementById("artist").value;
-      const movie = document.getElementById("movie").value;
       const manual = document.getElementById("searchBox").value;
 
-      let query = "";
-      if (manual) {
-        query = manual;
-      } else {
-        query = `${mood} ${lang} songs`;
-        if (artist) query += ` ${artist}`;
-        if (movie) query += ` ${movie}`;
-      }
-
+      let query = manual || `${mood} ${lang} songs`;
       const filter = getYearFilter(year);
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=10&key=${apiKey}${filter}`;
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=6&key=${apiKey}${filter}`;
 
-      document.getElementById("greeting").innerText = `Showing results for: ${query}`;
+      document.getElementById("greeting").innerText = `Cosmic ${mood} vibes: ${lang} songs`;
       document.getElementById("results").innerHTML = `
-        <div class="loading">
-          <div class="spinner"></div>
+        <div style="text-align: center; padding: 2rem;">
+          <div class="spinner" style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.2); border-radius: 50%; border-top-color: var(--highlight); margin: 0 auto; animation: spin 1s linear infinite;"></div>
+          <p style="margin-top: 1rem;">Tuning the cosmic frequencies...</p>
         </div>
       `;
 
@@ -498,18 +739,20 @@
                     <div class="song-card">
                       <div class="thumbnail">
                         <img src="${thumbnail}" alt="${title}">
-                        <div class="play-btn">
-                          <i class="fas fa-play"></i>
+                        <div class="play-overlay">
+                          <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                          </div>
                         </div>
                       </div>
                       <div class="song-info">
                         <h3 class="song-title">${title}</h3>
                         <div class="song-meta">
                           <span><i class="fas fa-user"></i> ${channel}</span>
-                          <span><i class="fas fa-eye"></i> ${Math.floor(Math.random() * 100)}M+ views</span>
+                          <span><i class="fas fa-eye"></i> ${Math.floor(Math.random() * 100)}M+</span>
                         </div>
                         <a href="${link}" target="_blank" class="watch-btn">
-                          <i class="fas fa-play"></i> Watch
+                          <i class="fas fa-play"></i> Play
                         </a>
                       </div>
                     </div>
@@ -519,10 +762,10 @@
             `;
           } else {
             resultsDiv.innerHTML = `
-              <div class="empty-state">
-                <i class="fas fa-music"></i>
-                <h3>No songs found</h3>
-                <p>Try adjusting your search criteria</p>
+              <div style="text-align: center; padding: 3rem; color: var(--secondary);">
+                <i class="fas fa-meteor" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>No cosmic tunes found</h3>
+                <p>Try adjusting your search parameters</p>
               </div>
             `;
           }
@@ -530,21 +773,32 @@
         .catch(error => {
           console.error('Error:', error);
           document.getElementById("results").innerHTML = `
-            <div class="empty-state">
-              <i class="fas fa-exclamation-triangle"></i>
-              <h3>Something went wrong</h3>
+            <div style="text-align: center; padding: 3rem; color: var(--secondary);">
+              <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+              <h3>Cosmic interference detected</h3>
               <p>Please try again later</p>
             </div>
           `;
         });
     }
     
+    function getYearFilter(yearType) {
+      if (yearType === 'latest') {
+        return `&publishedAfter=2015-01-01T00:00:00Z`;
+      } else if (yearType === 'mid') {
+        return `&publishedAfter=2005-01-01T00:00:00Z&publishedBefore=2015-12-31T00:00:00Z`;
+      } else if (yearType === 'old') {
+        return `&publishedBefore=2005-01-01T00:00:00Z`;
+      }
+      return "";
+    }
+    
     // Initial empty state
     document.getElementById("results").innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-search"></i>
-        <h3>Search for music</h3>
-        <p>Use the filters above to discover perfect songs for your mood</p>
+      <div style="text-align: center; padding: 3rem; color: var(--secondary);">
+        <i class="fas fa-music" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+        <h3>Ready for a cosmic music journey</h3>
+        <p>Select a mood and launch your search</p>
       </div>
     `;
   </script>
